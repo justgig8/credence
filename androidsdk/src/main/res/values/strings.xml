@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AndroidSDK</string>
+
+    <string name="url_register">/token/register</string>
+    <string name="url_request_push">/push/android</string>
+    <string name="url_publish_event">/event/publish</string>
+    <string name="url_update_info">/info/update</string>
+
+    <string name="event_dismissed">dismissed</string>
+    <string name="event_tapped">tapped</string>
+    <string name="event_delivered">delivered</string>
+</resources>
