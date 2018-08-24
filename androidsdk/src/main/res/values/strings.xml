@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">AndroidSDK</string>
 
+    <string name="url_config">https://t.d2c.in/credence/datamanager/api/config/get</string>
+
     <string name="url_register">/token/register</string>
     <string name="url_request_push">/push/android</string>
     <string name="url_publish_event">/event/publish</string>

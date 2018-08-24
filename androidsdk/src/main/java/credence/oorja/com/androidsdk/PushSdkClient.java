@@ -1,6 +1,7 @@
 package credence.oorja.com.androidsdk;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONObject;
 
@@ -26,9 +28,9 @@ import java.util.Map;
 public class PushSdkClient {
 
     private static final String TAG = "PushSdkClient";
-    private static final String URL_METAINFO = "https://g.d2c.in/datamanager/api/config/get";
 
     private static final boolean isTest = true;
+    private static final String testBaseUrl = "https://t.d2c.in/pushserver/api";
 
     private static boolean isInitialised;
     private static String apiKey;
@@ -46,13 +48,13 @@ public class PushSdkClient {
         PushSdkClient.apiKey = apiKey;
 
         if(isTest){
-            baseUrl = "https://g.d2c.in/pushserver/api";
+            baseUrl = testBaseUrl;
             isInitialised = true;
             return;
         }
 
         try {
-            final String url = URL_METAINFO;
+            final String url = context.getString(R.string.url_config);
             Log.d(TAG, "url: " + url);
 
             // Request a string response from the provided URL.
@@ -83,15 +85,32 @@ public class PushSdkClient {
         }
     }
 
-    public static void sendRegistrationTokenToServer(final Context context, final String token) {
-        sendRegistrationTokenToServer(context, token, null);
+    public static void registerIdentifier(Context context, String identifier){
+        Log.d(TAG, "registering identifier: " + identifier);
+        Cache.save(context, "pushIdentifier", identifier);
     }
 
-    public static void sendRegistrationTokenToServer(final Context context, final String token, final String identifier) {
+    public static void unregisterIdentifier(Context context){
+        Log.d(TAG, "registering identifier");
+        Cache.delete(context, "pushIdentifier");
+    }
+
+    public static void sendRegistrationTokenToServer(final Context context) {
+        String identifier = Cache.get(context, "pushIdentifier");
+        sendRegistrationTokenToServer(context, identifier);
+    }
+
+    public static void sendRegistrationTokenToServer(final Context context, String identifier) {
         if(!isInitialised) {
             Log.w(TAG, "SDK not initialised yet! You need to call init(Context context, String apiKey) method first");
             return;
         }
+        if(identifier==null){
+            String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
+            identifier = androidId;
+        }
+        registerIdentifier(context, identifier);
+        String token = FirebaseInstanceId.getInstance().getToken();
         try {
             if (token == null) {
                 Log.w(TAG, "token null, not sending to server");
@@ -183,73 +202,6 @@ public class PushSdkClient {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d(TAG, "That didn't work!");
-                    Toast.makeText(context, "Error: " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map map = super.getHeaders();
-                    Map headers = new HashMap(map);
-                    headers.put("Authorization", "Basic " + apiKey);
-                    return headers;
-                }
-
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
-                        return null;
-                    }
-                }
-            };
-            RequestQueue queue = Volley.newRequestQueue(context);
-            queue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void requestPushNotification(final Context context, String identifier, String appId, String appServerKey, String title, String body, String sound, String image) {
-        if(!isInitialised) {
-            Log.w(TAG, "SDK not initialised yet! You need to call init(Context context, String apiKey) method first");
-            return;
-        }
-        try {
-            Log.d(TAG, "requesting for push notification..");
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("appServerKey", appServerKey);
-            jsonBody.put("title", title);
-            jsonBody.put("identifier", identifier);
-            jsonBody.put("appId", appId);
-//            jsonBody.put("appVersionCode", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
-//            jsonBody.put("appVersionName", getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-            jsonBody.put("body", body);
-            jsonBody.put("sound", sound);
-            jsonBody.put("image", image);
-            final String mRequestBody = jsonBody.toString();
-            final String url = getFullUrl(context.getString(R.string.url_request_push));
-            Log.d(TAG, "url: " + url + ", request body: " + mRequestBody);
-
-            // Request a string response from the provided URL.
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            // Display the first 500 characters of the response string.
-                            Log.d(TAG, "Response: " + response);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d(TAG, "That didn't work!" + error);
                     Toast.makeText(context, "Error: " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }) {

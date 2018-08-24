@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Credence</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title">Breaking News</string>
+    <string name="url_newscategory_subscribe">https://t.d2c.in/credence/newsserver/api/user/subscribe</string>
+    <string name="url_newscategory_unsubscribe">https://t.d2c.in/credence/newsserver/api/user/unsubscribe</string>
+
+    <string name="imageUrl">https://www.lancashire.police.uk/media/366966/breaking-news.jpg</string>
+    <string name="imageUrl2">https://www.fashiongonerogue.com/wp-content/uploads/2015/11/Giorgio-Armani-Si-Perfume-Campaign.jpg</string>
+</resources>

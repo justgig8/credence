@@ -149,7 +149,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "icon: " + icon);
         int iconId = -1;
         if (icon != null) {
-            iconId = context.getResources().getIdentifier(icon, "drawable", context.getPackageName());
+            iconId = context.getResources().getIdentifier(icon, "mipmap", context.getPackageName());
             Log.d(TAG, "iconId: " + iconId);
         }
 

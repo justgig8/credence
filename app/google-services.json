@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "184986181299",
+    "firebase_url": "https://credence-b8db6.firebaseio.com",
+    "project_id": "credence-b8db6",
+    "storage_bucket": "credence-b8db6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184986181299:android:22bdd7537f5feba3",
+        "android_client_info": {
+          "package_name": "com.oorja.credence"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184986181299-0uuhlfrl2cj6n08483n1fficejcvs73u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAidzLedyzZI3SQcNZwk0VKrow02TaxlN0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
